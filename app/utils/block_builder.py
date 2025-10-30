@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 class BlockBuilder:
     @staticmethod
     def build_initial_form() -> List[Dict[str, Any]]:
-        return [
+        blocks = [
             {
                 "type": "section",
                 "text": {
@@ -27,29 +27,83 @@ class BlockBuilder:
                     },
                     "options": [
                         {"text": {"type": "plain_text", "text": f"{i}"}, "value": str(i)}
-                        for i in range(1, 6)
+                        for i in range(1, 4)  # Reduced from 5 to 3
                     ]
                 },
                 "label": {
                     "type": "plain_text",
                     "text": "Number of entries"
                 }
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "Continue"
-                        },
-                        "action_id": "show_entry_forms",
-                        "style": "primary"
-                    }
-                ]
             }
         ]
+        
+        # Add only 3 entry forms to stay within Slack limits
+        for i in range(3):
+            blocks.extend([
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"*Entry #{i + 1}*"
+                    }
+                },
+                {
+                    "type": "input",
+                    "block_id": f"client_block_{i}",
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": f"client_input_{i}",
+                        "placeholder": {
+                            "type": "plain_text",
+                            "text": "Enter client name"
+                        }
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "Client Name"
+                    }
+                },
+                {
+                    "type": "input",
+                    "block_id": f"hours_block_{i}",
+                    "element": {
+                        "type": "number_input",
+                        "action_id": f"hours_input_{i}",
+                        "is_decimal_allowed": True,
+                        "placeholder": {
+                            "type": "plain_text",
+                            "text": "Enter hours"
+                        }
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "Hours"
+                    }
+                },
+                {
+                    "type": "input",
+                    "block_id": f"description_block_{i}",
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": f"description_input_{i}",
+                        "multiline": True,
+                        "placeholder": {
+                            "type": "plain_text",
+                            "text": "Enter work description"
+                        }
+                    },
+                    "label": {
+                        "type": "plain_text",
+                        "text": "Description"
+                    },
+                    "optional": True
+                },
+                {
+                    "type": "divider"
+                }
+            ])
+        
+        return blocks
     
     @staticmethod
     def build_entry_forms(num_entries: int) -> List[Dict[str, Any]]:

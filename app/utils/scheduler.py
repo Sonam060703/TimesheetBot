@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class TaskScheduler:
     def __init__(self):
         self.scheduler = AsyncIOScheduler()
-        self.slack_service = SlackService()
+        # self.slack_service = SlackService()
     
     def start(self):
         # Weekly reminder every Friday at 10 AM

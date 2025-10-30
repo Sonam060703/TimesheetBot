@@ -6,6 +6,7 @@ from app.database import init_db
 from app.utils.scheduler import TaskScheduler
 from app.config import get_settings
 import logging
+from app.routers import slack_router_demo
 
 # Configure logging
 logging.basicConfig(
@@ -52,6 +53,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(slack_router.router)
+
+# app.include_router(slack_router_demo.router)
 
 
 @app.get("/")

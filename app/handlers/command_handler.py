@@ -18,25 +18,35 @@ class CommandHandler:
         self.slack_service = SlackService()
         self.block_builder = BlockBuilder()
     
-    async def handle_timesheet_command(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-        # Show initial form
-        blocks = self.block_builder.build_initial_form()
+    # async def handle_timesheet_command(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    #     # Show initial form
+    #     blocks = self.block_builder.build_initial_form()
         
-        return {
-            "response_type": "ephemeral",
-            "blocks": blocks,
-            "text": "Fill your timesheet"
-        }
+    #     return {
+    #         "response_type": "ephemeral",
+    #         "blocks": blocks,
+    #         "text": "Fill your timesheet"
+    #     }
+
+    async def handle_timesheet_command(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        trigger_id = payload.get("trigger_id")
+        blocks = self.block_builder.build_initial_form()
+
+        # Open modal with the full form
+        self.slack_service.open_modal(trigger_id, blocks)
+
+        # Return None to avoid showing any message
+        return None
     
     async def handle_weekly_report(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         user_id = payload.get('user_id')
         
         # Check if user is manager
-        if user_id != settings.slack_manager_user_id:
-            return {
-                "response_type": "ephemeral",
-                "text": "⚠️ You don't have permission to view reports."
-            }
+        # if user_id != settings.slack_manager_user_id:
+        #     return {
+        #         "response_type": "ephemeral",
+        #         "text": "⚠️ You don't have permission to view reports."
+        #     }
         
         # Get weekly entries
         entries = TimesheetService.get_weekly_entries(self.db)
@@ -55,11 +65,11 @@ class CommandHandler:
         user_id = payload.get('user_id')
         
         # Check if user is manager
-        if user_id != settings.slack_manager_user_id:
-            return {
-                "response_type": "ephemeral",
-                "text": "⚠️ You don't have permission to view reports."
-            }
+        # if user_id != settings.slack_manager_user_id:
+        #     return {
+        #         "response_type": "ephemeral",
+        #         "text": "⚠️ You don't have permission to view reports."
+        #     }
         
         # Get monthly entries
         entries = TimesheetService.get_monthly_entries(self.db)

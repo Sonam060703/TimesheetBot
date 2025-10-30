@@ -3,6 +3,7 @@ from slack_sdk.errors import SlackApiError
 from typing import List, Dict, Any, Optional
 from app.config import get_settings
 import logging
+from typing import List, Dict, Any
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -76,4 +77,22 @@ class SlackService:
             return True
         except SlackApiError as e:
             logger.error(f"Error sending DM: {e.response['error']}")
+            return False
+    
+    def open_modal(self, trigger_id: str, blocks: List[Dict[str, Any]], title: str = "Weekly Timesheet"):
+        try:
+            self.client.views_open(
+                trigger_id=trigger_id,
+                view={
+                    "type": "modal",
+                    "callback_id": "submit_timesheet",
+                    "title": {"type": "plain_text", "text": title},
+                    "submit": {"type": "plain_text", "text": "Submit"},
+                    "close": {"type": "plain_text", "text": "Cancel"},
+                    "blocks": blocks
+                },
+            )
+            return True
+        except SlackApiError as e:
+            logger.error(f"Error opening modal: {e.response['error']}")
             return False
